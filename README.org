@@ -1,0 +1,3 @@
+* emacs-and-tools
+Personal Emacs setup and collection of tools I'd expect to be present,
+in Nix flake form.

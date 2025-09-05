@@ -1,0 +1,10 @@
+Tanken er å samle
+
+- default.el
+- emacs
+- emacs-pakker (referert til i default.el)
+- programmer som trengs for pakkene (kanskje referert til i default.el)
+
+sammen på én plass, sånn at nix kan sørge for å holde miljøet
+konsistent. File default.el blir lagt inn i site-lisp, og er en del av
+oppstarten av emacs.
