@@ -10,29 +10,32 @@
       flake-utils,
     }:
     {
-      inherit nixpkgs;
-      
-      nixosModules = {
-        emacs-and-tools = import ./module.nix;
+      nixosModules.default = import ./module.nix;
+      overlays.default = import ./overlay.nix;
+
+      nixosConfigurations.test = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          self.nixosModules.default
+          { config.programs.emacs-and-tools.enable = true; }
+          # The iso-image module is just to get some sort of minimal
+          # buildable configuration. Without it we'd have to specify
+          # more parameters in the nixos config.
+          (
+            { modulesPath, ... }:
+            {
+              imports = [ "${modulesPath}/installer/cd-dvd/iso-image.nix" ];
+            }
+          )
+        ];
       };
-      overlays = {
-        emacs-and-tools = final: prev: {
-          emacs-and-tools = import ./pkgs/emacs-and-tools {
-            nixpkgs = prev;
-          };
-          emacs-and-tools-nox = import ./pkgs/emacs-and-tools {
-            nixpkgs = prev;
-            nox = true;
-          };
-        };
-      };
+
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          config.allowUnfree = false;
           overlays = builtins.attrValues self.overlays;
         };
       in

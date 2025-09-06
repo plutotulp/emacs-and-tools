@@ -6,11 +6,7 @@
 }:
 let
   cfg = config.programs.emacs-and-tools;
-  emacs-and-tools = import ../emacs-and-tools {
-    nixpkgs = pkgs;
-    inherit (cfg) nox;
-  };
-  emacs-and-tools-overlay = import ../overlays/emacs-and-tools.nix;
+  emacs-and-tools-overlay = import ./overlay.nix;
 in
 {
   options.programs.emacs-and-tools = {
@@ -36,11 +32,11 @@ in
       emacs-and-tools-overlay
     ];
     environment.systemPackages = lib.mkIf cfg.enable [
-      emacs-and-tools
+      pkgs.emacs-and-tools
     ];
     services.emacs = {
       enable = cfg.enable;
-      package = emacs-and-tools;
+      package = pkgs.emacs-and-tools;
     };
   };
 }
