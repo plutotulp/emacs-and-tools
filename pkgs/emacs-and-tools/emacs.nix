@@ -73,6 +73,11 @@ let
           yasnippet
           yasnippet-snippets
           zenburn-theme
+
+          org-present
+          epresent
+          dslide
+
         ]
       );
       elpaPackages = (
