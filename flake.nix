@@ -10,41 +10,65 @@
       flake-utils,
     }:
     {
-      nixosModules.default = import ./module.nix;
       overlays.default = import ./overlay.nix;
-
-      nixosConfigurations.test = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          self.nixosModules.default
-          { config.programs.emacs-and-tools.enable = true; }
-          # The iso-image module is just to get some sort of minimal
-          # buildable configuration. Without it we'd have to specify
-          # more parameters in the nixos config.
-          (
-            { modulesPath, ... }:
-            {
-              imports = [ "${modulesPath}/installer/cd-dvd/iso-image.nix" ];
-            }
-          )
-        ];
-      };
-
+      nixosModules.default = import ./module.nix;
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs {
           inherit system;
+          config = { };
           overlays = builtins.attrValues self.overlays;
         };
       in
       {
         formatter = pkgs.nixfmt-rfc-style;
+
         packages = {
           inherit (pkgs) emacs-and-tools emacs-and-tools-nox;
         };
 
+        # Test that the systemd user service emacs.service starts
+        # successfully on login. We're happy when we can get the emacs
+        # version by running elisp in emacsclient.
+        checks.emacs-user-service-starts =
+          let
+            user = "alice";
+            uid = 1000;
+          in
+          pkgs.nixosTest {
+
+            name = "emacs-user-service-starts";
+
+            interactive.sshBackdoor.enable = true;
+
+            nodes = {
+              machine =
+                { config, pkgs, ... }:
+                {
+                  imports = [ self.nixosModules.default ];
+                  config = {
+                    programs.emacs-and-tools.enable = true;
+                    users.users."${user}" = {
+                      isNormalUser = true;
+                      inherit uid;
+                    };
+                    services.getty.autologinUser = "${user}";
+                  };
+                };
+            };
+
+            testScript = ''
+              start_all()
+              machine.wait_for_unit("multi-user.target")
+              machine.wait_for_unit("user@${uid}.service")
+              machine.wait_for_unit("emacs.service", user="${user}")
+              machine.succeed("su --login ${user} --command 'emacsclient --socket /run/user/${builtins.toString uid}/emacs/server --eval \"(emacs-version)\"'")
+            '';
+
+          };
+
       }
-    );
+    ); # end flake-utils.lib.eachDefaultSystem
 }
