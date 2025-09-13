@@ -25,6 +25,8 @@
       {
         formatter = pkgs.nixfmt-rfc-style;
 
+        # This app is just here for testing purposes. It's handy to
+        # just do `nix run` after making a change in the config.
         apps.default = {
           type = "app";
           program = "${pkgs.emacs-and-tools}/bin/emacs";
