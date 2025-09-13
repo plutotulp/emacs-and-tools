@@ -48,7 +48,7 @@ let
           lsp-ui
           magit
           markdown-mode
-          meow
+          meow # modal editing
           modus-themes
           multi-vterm
           nix-mode
