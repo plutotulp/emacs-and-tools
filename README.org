@@ -1,3 +1,13 @@
 * emacs-and-tools
 Personal Emacs setup and collection of tools I'd expect to be present,
 in Nix flake form.
+
+Enable by importing ~nixosModules.default~ from this flake and setting
+~config.programs.emacs-and-tools.enable~ in your NixOS configuration.
+
+Lots of dependencies included. Starts systemd user service
+~emacs.service~ on user login.
+
+This flake includes a NixOS integration test verifying that the user
+service actually starts up successfully on login. Just run
+~nix flake check~.
