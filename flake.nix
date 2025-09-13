@@ -25,6 +25,11 @@
       {
         formatter = pkgs.nixfmt-rfc-style;
 
+        apps.default = {
+          type = "app";
+          program = "${pkgs.emacs-and-tools}/bin/emacs";
+        };
+
         packages = {
           inherit (pkgs) emacs-and-tools emacs-and-tools-nox;
         };
