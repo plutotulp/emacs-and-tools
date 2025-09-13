@@ -48,6 +48,7 @@ let
           lsp-ui
           magit
           markdown-mode
+          meow
           modus-themes
           multi-vterm
           nix-mode

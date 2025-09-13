@@ -494,6 +494,8 @@ which-key-idle-delay."
 
 (use-package gleam-ts-mode)
 
+(use-package meow)
+
 (use-package emacs
   :init
   ;; Mye bedre scrolling i grafisk modus
