@@ -25,11 +25,17 @@
       {
         formatter = pkgs.nixfmt-rfc-style;
 
-        apps.default = {
-          type = "app";
-          program = "${pkgs.emacs-and-tools}/bin/emacs";
-          meta.description = "fat emacs (for testing with `nix run`)";
-        };
+        apps.default =
+          let
+            debug-emacs = pkgs.writeShellScript "debug-emacs" ''
+              ${pkgs.emacs-and-tools}/bin/emacs --debug-init
+            '';
+          in
+          {
+            type = "app";
+            program = "${debug-emacs}";
+            meta.description = "fat emacs (for testing with `nix run`)";
+          };
 
         packages = {
           inherit (pkgs) emacs-and-tools emacs-and-tools-nox;
