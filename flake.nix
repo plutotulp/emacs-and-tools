@@ -62,7 +62,7 @@
             testScript = ''
               start_all()
               machine.wait_for_unit("multi-user.target")
-              machine.wait_for_unit("user@${uid}.service")
+              machine.wait_for_unit("user@${builtins.toString uid}.service")
               machine.wait_for_unit("emacs.service", user="${user}")
               machine.succeed("su --login ${user} --command 'emacsclient --socket /run/user/${builtins.toString uid}/emacs/server --eval \"(emacs-version)\"'")
             '';
