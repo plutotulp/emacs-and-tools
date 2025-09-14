@@ -39,6 +39,7 @@
 
         packages = {
           inherit (pkgs) emacs-and-tools emacs-and-tools-nox;
+          default = pkgs.emacs-and-tools;
         };
 
         # Test that the systemd user service emacs.service starts

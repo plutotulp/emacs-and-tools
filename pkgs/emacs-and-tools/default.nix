@@ -3,129 +3,116 @@
 # configuration (in ./default.el).
 
 {
-  nixpkgs,
-  nox ? false,
+  pkgs,
+  lib,
+  buildEnv,
+  emacs-and-packages,
 }:
+buildEnv {
+  name = "emacs-and-tools-${emacs-and-packages.emacs.version}";
+  paths =
+    lib.singleton emacs-and-packages
+    ++ (with pkgs; [
+      aspell
+      aspellDicts.br
+      aspellDicts.en
+      aspellDicts.nb
 
-let
+      # dart-mode
+      dart
 
-  name = "emacs-and-tools-${version}";
+      # dhall
+      dhall
+      dhall-json
+      #dhall-lsp-server # 2023-09-23 marked as broken in unstable
 
-  lib = nixpkgs.lib;
+      # elm-mode
+      elmPackages.elm
+      elmPackages.elm-format
 
-  # FIXME: Only descriptive, does not actually set the version of
-  # emacs used in ./emacs.nix.
-  version = emacsPaths.emacs.version;
+      # godot game engine # 2024-12-12 gone
+      #gdtoolkit
 
-  emacsPaths = import ./emacs.nix { inherit nixpkgs nox; };
+      # go-mode (w/lsp)
+      go
+      gopls
 
-  pkgs = with nixpkgs; [
-    aspell
-    aspellDicts.br
-    aspellDicts.en
-    aspellDicts.nb
+      # haskell-mode, though usually using some nix-shell version
+      # instead
+      cabal-install
+      (ghc.withPackages (
+        p: with p; [
+          # Note that you still need SuperCollider with sc3-plugins and
+          # SuperDirt in order to make music with tidal.
+          tidal
+        ]
+      ))
+      haskell-language-server
+      cabal2nix
+      ghcid
+      hlint
 
-    # dart-mode
-    dart
+      # Emacs uses its "convert" program internally for e.g. creating
+      # thumbnails for image-dired.
+      imagemagick
 
-    # dhall
-    dhall
-    dhall-json
-    #dhall-lsp-server # 2023-09-23 marked as broken in unstable
+      # magit
+      git
 
-    # elm-mode
-    elmPackages.elm
-    elmPackages.elm-format
+      # rust-mode, flycheck-rust, cargo
+      cargo
+      rustc
+      rustfmt
+      rust-analyzer
+      clippy
 
-    # godot game engine # 2024-12-12 gone
-    #gdtoolkit
+      # Schemes
+      racket
+      # chez # 2024-06-11 marked as broken
+      # chez-matchable
+      # chez-scmutils
 
-    # go-mode (w/lsp)
-    go
-    gopls
+      # R-lang. Mostly for plotting with ggplot2.
+      R
 
-    # haskell-mode, though usually using some nix-shell version
-    # instead
-    cabal-install
-    (ghc.withPackages (
-      p: with p; [
-        # Note that you still need SuperCollider with sc3-plugins and
-        # SuperDirt in order to make music with tidal.
-        tidal
-      ]
-    ))
-    haskell-language-server
-    cabal2nix
-    ghcid
-    hlint
+      # gleam
+      erlang
+      rebar3
+      gleam
 
-    # Emacs uses its "convert" program internally for e.g. creating
-    # thumbnails for image-dired.
-    imagemagick
+      # shell / bash
+      shellcheck
 
-    # magit
-    git
+      # tex / latex. Mostly for org-mode exports.
+      (texlive.combine {
+        inherit (texlive) scheme-full;
+      })
 
-    # rust-mode, flycheck-rust, cargo
-    cargo
-    rustc
-    rustfmt
-    rust-analyzer
-    clippy
+      # helm-rg
+      ripgrep
 
-    # Schemes
-    racket
-    # chez # 2024-06-11 marked as broken
-    # chez-matchable
-    # chez-scmutils
+      # For org-roam (currently not enabled) and code blocks in
+      # org-mode.
+      sqlite
 
-    # R-lang. Mostly for plotting with ggplot2.
-    R
+      # For Openoffice (Libreoffice) exports
+      zip
 
-    # gleam
-    erlang
-    rebar3
-    gleam
+      # System commands
+      coreutils-full
+      dool
+      findutils
+      gawk
+      gdb
+      gnugrep
+      gnuplot
+      gnused
+      less
+      # nix
+      openssh
+      procps
+      # sudo
+      unzip
+    ]);
 
-    # shell / bash
-    shellcheck
-
-    # tex / latex. Mostly for org-mode exports.
-    (texlive.combine {
-      inherit (texlive) scheme-full;
-    })
-
-    # helm-rg
-    ripgrep
-
-    # For org-roam (currently not enabled) and code blocks in
-    # org-mode.
-    sqlite
-
-    # For Openoffice (Libreoffice) exports
-    zip
-
-    # System commands
-    coreutils-full
-    dool
-    findutils
-    gawk
-    gdb
-    gnugrep
-    gnuplot
-    gnused
-    less
-    # nix
-    openssh
-    procps
-    # sudo
-    unzip
-  ];
-
-  env = nixpkgs.buildEnv {
-    name = name;
-    paths = lib.singleton emacsPaths ++ pkgs;
-  };
-
-in
-env
+}
