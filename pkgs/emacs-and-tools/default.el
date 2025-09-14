@@ -588,7 +588,7 @@ which-key-idle-delay."
      '("'" . repeat)
      '("<escape>" . ignore)))
   (meow-setup)
-  (meow-global-mode))
+  (meow-global-mode 1))
 
 (use-package emacs
   :init
