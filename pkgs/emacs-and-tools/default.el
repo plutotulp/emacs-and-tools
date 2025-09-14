@@ -494,6 +494,15 @@ which-key-idle-delay."
 
 (use-package gleam-ts-mode)
 
+
+;; Meow kommer helt uten tastebindinger i utgangspunktet, men i repoet
+;; sitt har de noen forslag til hvilke ~meow-setup~ du kan lage. Jeg
+;; har kopiert qwerty-layouten deres siden jeg ikke har noen ide om
+;; hva slags bindinger som gir mening, og jeg tror de vil ligne litt
+;; på vim.
+;;
+;; https://github.com/meow-edit/meow
+;; https://github.com/meow-edit/meow/blob/master/KEYBINDING_QWERTY.org
 (use-package meow
   :config
   (defun meow-setup ()
