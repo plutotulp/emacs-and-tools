@@ -40,7 +40,6 @@ emacsWithPackages (
     magit
     marginalia
     markdown-mode
-    meow # modal editing
     modus-themes
     multi-vterm
     nix-mode
