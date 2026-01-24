@@ -23,6 +23,7 @@ emacsWithPackages (
     docker
     dumb-jump
     elm-mode
+    envrc
     erlang
     ess
     evil
@@ -33,10 +34,6 @@ emacsWithPackages (
     gnuplot-mode
     go-mode
     haskell-mode
-    lsp-haskell
-    lsp-mode
-    lsp-treemacs
-    lsp-ui
     magit
     marginalia
     markdown-mode

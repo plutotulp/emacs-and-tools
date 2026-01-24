@@ -1,8 +1,7 @@
 (setq lexical-binding t)
 
 ;; Increase GC threshold so we don't spend all our time doing GC. This
-;; is good for startup and for lsp-mode, but of course means emacs
-;; needs a bit of RAM.
+;; is good for startup, but of course means emacs needs a bit of RAM.
 (setq gc-cons-threshold 100000000) ; 100MB
 
 ;; Package installation is handled by Nix (see emacs.nix).
@@ -20,24 +19,6 @@
   (setf mac-command-modifier 'meta)
   ;; sets fn-delete to be right-delete
   (global-set-key [kp-delete] 'delete-char))
-
-
-(defconst my/lsp-prefix "C-c l"
-  "Key prefix used to activate lsp-mode")
-
-
-(defun my/which-key-delay-lsp (keyseq seqlen)
-  "Delay to use for which-key when entering lsp-mode, in addition
-to which-key-idle-delay."
-  (when (string-equal keyseq my/lsp-prefix)
-    ;; We want lsp-mode to be snappy
-    0))
-
-(defun my/which-key-delay-default (keyseq seqlen)
-  "Default delay to use for which-key, in addition to
-which-key-idle-delay."
-  0.9)
-
 
 
 ;;;; ============================================================
@@ -86,6 +67,10 @@ which-key-idle-delay."
 
 (use-package autorevert
   :diminish) ;; diminish doesn't work?
+
+(use-package envrc
+  :hook
+  (after-init-hook . envrc-global-mode))
 
 (use-package imenu
   ;; Displacing 'tab-to-tab-stop, which isn't very useful. Note that
@@ -273,12 +258,7 @@ which-key-idle-delay."
 (use-package which-key
   :diminish
   :init
-  (which-key-mode t)
-  :custom
-  (which-key-delay-functions
-   '(my/which-key-delay-lsp
-     my/which-key-delay-default))
-  (which-key-idle-delay 0.1))
+  (which-key-mode t))
 
 (use-package projectile
   :diminish
@@ -308,66 +288,63 @@ which-key-idle-delay."
   :hook
   ((haskell-mode-hook . interactive-haskell-mode)
    (haskell-mode-hook . display-line-numbers-mode)
-   (haskell-literate-mode-hook . lsp-deferred)
    (haskell-literate-mode-hook . display-line-numbers-mode)))
 
-(use-package lsp-haskell
-  ;; Having experimented with autoformatting on save using ormolu,
-  ;; fourmolu and brittany, I think I'll just *not* autoformat Haskell
-  ;; code.
-  ;;
-  ;; :config
-  ;; (defun lsp-haskell-mode-install-save-hooks ()
-  ;;   (add-hook 'before-save-hook #'lsp-format-buffer t t))
-  ;; :custom
-  ;; (lsp-haskell-formatting-provider "ormolu")
-  :hook
-  ((haskell-mode-hook . lsp-deferred)))
-  ;; (haskell-mode-hook . lsp-haskell-mode-install-save-hooks)))
+;; (use-package lsp-haskell
+;;   ;; Having experimented with autoformatting on save using ormolu,
+;;   ;; fourmolu and brittany, I think I'll just *not* autoformat Haskell
+;;   ;; code.
+;;   ;;
+;;   ;; :config
+;;   ;; (defun lsp-haskell-mode-install-save-hooks ()
+;;   ;;   (add-hook 'before-save-hook #'lsp-format-buffer t t))
+;;   ;; :custom
+;;   ;; (lsp-haskell-formatting-provider "ormolu")
+;;   :hook
+;;   ((haskell-mode-hook . lsp-deferred)))
+;;   ;; (haskell-mode-hook . lsp-haskell-mode-install-save-hooks)))
 
 (use-package tidal)
 
 (use-package go-mode
   :init
-  :config
-  (defun lsp-go-mode-install-save-hooks ()
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)
-    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  ;; :config
+  ;; (defun lsp-go-mode-install-save-hooks ()
+  ;;   (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  ;;   (add-hook 'before-save-hook #'lsp-organize-imports t t))
   :hook
-  ((go-mode-hook . lsp-go-mode-install-save-hooks)
-   (go-mode-hook . lsp-deferred)
-   (go-mode-hook . display-line-numbers-mode)))
+  ((go-mode-hook . display-line-numbers-mode)))
 
 (use-package rust-mode
-  :custom
-  (lsp-rust-analyzer-cargo-watch-command "clippy")
-  (lsp-rust-analyzer-server-display-inlay-hints 't)
+  ;; :custom
+  ;; (lsp-rust-analyzer-cargo-watch-command "clippy")
+  ;; (lsp-rust-analyzer-server-display-inlay-hints 't)
   :hook
-  ((rust-mode-hook . lsp-deferred)
-   (rust-mode-hook . display-line-numbers-mode)))
+  ((rust-mode-hook . display-line-numbers-mode)))
 
 (use-package rustic
   :custom
-  (rustic-format-trigger 'on-save))
+  (rustic-format-trigger 'on-save)
+  (rustic-lsp-client 'eglot))
 
-(use-package lsp-mode
-  :init
-  (setq lsp-keymap-prefix my/lsp-prefix)
-  :hook ((lsp-mode-hook . lsp-enable-which-key-integration)
-	 (lsp-mode-hook . (lambda nil
-			    (setq read-process-output-max (* 1024 1024)))))
-  :commands (lsp lsp-deferred))
+;; (use-package lsp-mode
+;;   :init
+;;   (setq lsp-keymap-prefix my/lsp-prefix)
+;;   :hook ((lsp-mode-hook . lsp-enable-which-key-integration)
+;; 	 (lsp-mode-hook . (lambda nil
+;; 			    (setq read-process-output-max (* 1024 1024)))))
+;;   :commands (lsp lsp-deferred))
 
-(use-package lsp-ui
-  :commands lsp-ui-mode)
+;; (use-package lsp-ui
+;;   :commands lsp-ui-mode)
 
 ;; (use-package helm-lsp
 ;;   :commands helm-lsp-workspace-symbol)
 
-(use-package lsp-treemacs
-  :config
-  (lsp-treemacs-sync-mode 1)
-  :commands lsp-treemacs-errors-list)
+;; (use-package lsp-treemacs
+;;   :config
+;;   (lsp-treemacs-sync-mode 1)
+;;   :commands lsp-treemacs-errors-list)
 
 ;; optionally if you want to use debugger
 ;; (use-package dap-mode)

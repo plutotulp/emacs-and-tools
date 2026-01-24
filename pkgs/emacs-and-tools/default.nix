@@ -18,6 +18,12 @@ buildEnv {
       aspellDicts.en
       aspellDicts.nb
 
+      # direnv helps with nix integration for project directories,
+      # enabling emacs to use the local devShell for dependencies and
+      # lsp servers.
+      direnv
+      nix-direnv
+
       # dart-mode
       dart
 
