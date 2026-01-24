@@ -23,7 +23,7 @@
         };
       in
       {
-        formatter = pkgs.nixfmt-rfc-style;
+        formatter = pkgs.nixfmt;
 
         apps.default =
           let
