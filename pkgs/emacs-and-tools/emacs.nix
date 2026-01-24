@@ -27,8 +27,6 @@ emacsWithPackages (
     erlang
     ess
     evil
-    flycheck
-    flycheck-rust
     gdscript-mode # godot game engine
     gleam-ts-mode
     gnuplot-mode
