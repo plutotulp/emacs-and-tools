@@ -50,7 +50,7 @@
             user = "alice";
             uid = 1000;
           in
-          pkgs.nixosTest {
+          pkgs.testers.nixosTest {
 
             name = "emacs-user-service-starts";
 
