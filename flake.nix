@@ -34,7 +34,7 @@
           {
             type = "app";
             program = "${debug-emacs}";
-            meta.description = "fat emacs (for testing with `nix run`)";
+            meta.description = "fat emacs with --debug-init (for testing with `nix run`)";
           };
 
         packages = {
