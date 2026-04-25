@@ -25,7 +25,7 @@ emacsWithPackages (
     elm-mode
     envrc
     erlang
-    ess
+    # ess # dead repos 2026-04-25
     evil
     gdscript-mode # godot game engine
     gleam-ts-mode
