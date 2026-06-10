@@ -84,7 +84,7 @@ buildEnv {
       # gleam
       erlang
       rebar3
-      gleam
+      # gleam # Tryner kompilering 2026-07-10
 
       # shell / bash
       shellcheck
