@@ -82,7 +82,7 @@ buildEnv {
       R
 
       # gleam
-      erlang
+      beamPackages.erlang
       rebar3
       # gleam # Tryner kompilering 2026-07-10: problemer med CA-sertifikater i tester
 
