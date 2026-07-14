@@ -90,9 +90,9 @@ buildEnv {
       shellcheck
 
       # tex / latex. Mostly for org-mode exports.
-      (texlive.combine {
-        inherit (texlive) scheme-full;
-      })
+      (texliveSmall.withPackages (p: [
+        p.scheme-full
+      ]))
 
       # helm-rg
       ripgrep
